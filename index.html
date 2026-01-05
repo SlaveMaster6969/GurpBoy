@@ -1,51 +1,41 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <title>Pi-Boy Prototype - RobCo Edition</title>
+    <title>Pi-Boy Prototype</title>
     <link rel="stylesheet" href="css/PipStyle.css" type="text/css">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/PimpMahBoi.js"></script>
     
     <style>
-        /* --- GLOBAL GREEN THEME --- */
-        :root {
-            --pip-green: #17ff2b; 
-            --pip-green-dim: rgba(23, 255, 43, 0.2);
+        /* --- THE GREEN OVERRIDE --- */
+        :root { --fallout-green: #17ff2b; }
+        
+        body, .TopScreen, .MainScreen, .StatBar, .menu-option, .submenu-option, .InvetoryItemButton, .bar, td, th {
+            color: var(--fallout-green) !important;
+            border-color: var(--fallout-green) !important;
         }
+        #BotomLine { border-bottom: 2px solid var(--fallout-green) !important; }
+        .progress-bar { background-color: var(--fallout-green) !important; }
+        
+        /* Tint all images green */
+        img, .TintImg { filter: sepia(100%) saturate(300%) hue-rotate(70deg) brightness(0.9); }
 
-        body {
-            background-color: black !important;
-            color: var(--pip-green) !important;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-        }
-
-        /* Force everything to Green */
-        .TopScreen, .MainScreen, .StatBar, .menu-option, .submenu-option, 
-        .InvetoryItemButton, .bar, .StatItemButton {
-            color: var(--pip-green) !important;
-            border-color: var(--pip-green) !important;
-        }
-
-        #BotomLine { border-bottom: 2px solid var(--pip-green) !important; }
-        .progress-bar { background-color: var(--pip-green) !important; }
-
-        /* --- CENTERED VAULT BOY --- */
+        /* --- THE PERFECT CENTERED GIF --- */
         #PipBoyImg {
             position: absolute;
-            top: 45%; /* Adjusted for the Pip-Boy screen center */
+            top: 45%; 
             left: 50%;
             transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             margin: 0 !important;
+            padding: 0 !important;
+            z-index: 1;
         }
+        #PipBoyImg img { width: 260px; height: auto; display: block; }
 
-        #PipBoyImg img {
-            max-width: 280px;
-            filter: sepia(100%) saturate(300%) hue-rotate(70deg); /* Makes GIF Green */
-        }
-
-        /* --- VIDEO OVERLAY --- */
+        /* --- VIDEO TRANSITION --- */
         #VideoOverlay {
             display: none;
             position: fixed;
@@ -55,58 +45,34 @@
             z-index: 9999;
         }
         #VideoOverlay video { width: 100%; height: 100%; object-fit: cover; }
-
-        /* --- HACKING TERMINAL --- */
-        #HackingScreen {
-            display: none;
-            padding: 40px;
-            height: 100%;
-            background: black;
-        }
-
-        .terminal-text {
-            font-size: 18px;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
-
-        .scanline {
-            width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-        }
+        
+        /* Ensure the Hacking screen matches your style */
+        #HackingScreen { padding: 30px; display: none; }
     </style>
-
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.js"></script>
-    <script type="text/javascript" src="js/bootstrap.js"></script>
 </head>
 
 <body>
-    <div class="scanline"></div>
-
     <div id="VideoOverlay">
-        <video id="HackingVid">
-            <source src="assets/hacking_intro.mp4" type="video/mp4">
-        </video>
+        <video id="HackingVid"><source src="assets/hacking_intro.mp4" type="video/mp4"></video>
     </div>
 
     <div id="TopMenu" class="TopScreen">
-        <span id="StatMenu" class="menu-option" style="position:absolute;left:13%; cursor:pointer;">STATS</span>
-        <span id="InvMenu" class="menu-option"  style="position:absolute;left:30%; cursor:pointer;">INV</span>
-        <span id="HackingMenu" class="menu-option" style="position:absolute;left:47%; cursor:pointer;">HACKING</span>
-        <span id="MapMenu" class="menu-option"  style="position:absolute;right:30%; cursor:pointer;">MAP</span>
-        <span id="RadioMenu" class="menu-option" style="position:absolute;right:15%; cursor:pointer;">RADIO</span>
+        <span id="StatMenu" class="menu-option" style="position:absolute;left:13%;">STATS</span>
+        <span id="InvMenu" class="menu-option"  style="position:absolute;left:30%;">INV</span>
+        <span id="HackingTabTrigger" class="menu-option" style="position:absolute;left:47%; cursor:pointer;">HACKING</span>
+        <span id="MapMenu" class="menu-option"  style="position:absolute;right:30%;">MAP</span>
+        <span id="RadioMenu" class="menu-option" style="position:absolute;right:15%;">RADIO</span>
         <br />
         <div id="BotomLine"></div>
     </div>
 
     <div class="MainScreen">
-        
-        <div id="StatScreen" class="page">
+        <div id="StatScreen">
+            <span id="StatSub" style="position:absolute;">
+                <span id="StatusBtn"  class="submenu-option">STATUS</span>
+                <span id="SpecialBtn" class="submenu-option">SPECIAL</span>
+                <span id="PerksBtn"   class="submenu-option">PERKS</span>
+            </span>
             <div id="StatusScreen" style="top:25px;width:100%;height:90%">
                 <span id="HeadHP" class="bar" style="top:60px;"></span>
                 <span id="LArmHP" class="bar" style="top:125px; margin-left:-170px;"></span>
@@ -115,8 +81,17 @@
                 <span id="LLegHP" class="bar" style="bottom:135px; margin-left:-170px;"></span>
                 <span id="RLegHP" class="bar" style="bottom:135px; margin-left: 170px;"></span>
                 
-                <span id="PipBoyImg">
-                    <img src="img/ICONS/STATS/STATUS/download.gif" />
+                <div id="EquipIcons">
+                    <span class="EquipIcon" style="left:32px;top:200px;"><br /><img src="img/ICONS/STATS/STATUS/weapon icon.png" /></span>
+                    <span class="EquipIcon" style="left:129px;top:200px;width:60;padding:20 0px;"><br /><img src="img/ICONS/STATS/STATUS/crosshair icon.png" /><br /><br />180</span>
+                    <span class="EquipIcon" style="right:48px;top:165px;width:100"><br /><img src="img/ICONS/STATS/STATUS/armor icon.png" /></span>
+                    <span class="EquipIcon" style="right:115px;top:265px;padding:10 0px;height:72px;width:32px;"><br /><img src="img/ICONS/STATS/STATUS/dam icon.png"/><br />13</span>
+                    <span class="EquipIcon" style="right:81px;top:265px;padding:10 0px;height:72px;width:32px"><br /><img src="img/ICONS/STATS/STATUS/tec icon.png" /> <br />10</span>
+                    <span class="EquipIcon" style="right:47px;top:265px;padding:10 0px;height:72px;width:32px"><br /><img src="img/ICONS/STATS/STATUS/rad icon.png" /> <br />18</span>
+                </div>
+
+                <span id="PipBoyImg" class="DefaultObject">
+                  <img src="img/ICONS/STATS/STATUS/download.gif" />
                 </span>
 
                 <div id="StatItems" style="position:absolute; bottom:35px;">
@@ -124,55 +99,91 @@
                     <span id="StatRad" class="StatItemButton">RadAway (0)</span>
                 </div>
             </div>
-        </div>
 
-        <div id="HackingScreen" class="page">
-            <div class="terminal-text">
-                <p>> ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL</p>
-                <p>> ENTER PASSWORD NOW</p>
-                <br>
-                <div id="TerminalGame">
-                    <p>0xF3A2  $@!#%WORD%#</p>
-                    <p>0xF3B4  *&^$CODE^%$</p>
-                    <p>0xF3C8  !@#$PASS!@#</p>
-                    <p>> [SYSTEM LOCKED - SELECT SEED]</p>
-                </div>
+            <div id="SpecialScreen">
+                <table style="position:absolute;left:55px;top:50px;border-collapse:separate;border-spacing:0 5px" width="355">
+                  <tr id="STR" class="InvetoryItemButton"><td>Strength</td><td style="text-align:center;">8</td></tr>
+                  <tr id="PER" class="InvetoryItemButton"><td>Perception</td><td style="text-align:center;">7</td></tr>
+                  <tr id="END" class="InvetoryItemButton"><td>Endurance</td><td style="text-align:center;">10</td></tr>
+                  <tr id="CHR" class="InvetoryItemButton"><td>Charimsa</td><td style="text-align:center;">7</td></tr>
+                  <tr id="INT" class="InvetoryItemButton"><td>Inteligance</td><td style="text-align:center;">8</td></tr>
+                  <tr id="AGI" class="InvetoryItemButton"><td>Agility</td><td style="text-align:center;">5</td></tr>
+                  <tr id="LCK" class="InvetoryItemButton"><td>Luck</td><td style="text-align:center;">5</td></tr>
+                </table>
+                <div id="SImg" class="EquipIcon TintImg" style="positon:absolute;top:50px;right:40px;width:300px;height:250px;"></div>
+            </div>
+            
+            <div id="StatusBar" style="position:absolute; bottom:0px;display:block;margin:0px;width:100%;">
+                <button id="HPButton" class="StatBar">HP &nbsp;&nbsp;&nbsp; 510/510 &nbsp;&nbsp;&nbsp;&nbsp;</button>
+                <span class="StatBar" style="width:480px">LEVEL 20 &nbsp;
+                  <div class="progress" style="position:absolute; bottom:0px; width:365px; height:8px; margin-bottom:13px"><div id="BatHealth" class="progress-bar" role="progressbar" style="width:100%;"></div></div>
+                </span>
+                <span class="StatBar">AP &nbsp;&nbsp;&nbsp;&nbsp; <span id="BatAP" style="text-align: right">100/100</span></span>
             </div>
         </div>
 
-        <div id="InvScreen" class="page" style="display:none;">
-            <p style="padding:50px;">Inventory Active...</p>
+        <div id="InvScreen" style="top:25px;position:absolute;width:100%;height:90%">
+            <span id="InvSub" style="position:absolute;">
+                <span id="WeaponBtn" class="submenu-option" >WEAPON</span>
+                <span id="ApparelBtn" class="submenu-option">APPAREL</span>
+                <span id="AidBtn" class="submenu-option" >AID</span>
+                <span id="MiscBtn" class="submenu-option" >MISC</span>
+                <span id="JunkBtn" class="submenu-option" >JUNK</span>
+            </span>
+            <div id="WeaponList" style="position:absolute;left:40px;top:50px;">
+                <table width="325"><tr class="InvetoryItemButton"><td>Solrac's Shotgun</td><td>1</td></tr></table>
+            </div>
+            <div id="ItImg" class="EquipIcon TintImg" style="position:absolute;top:30px;right:15px;width:300px;height:250px;"></div>
         </div>
 
+        <div id="HackingScreen" style="top:25px;width:100%;height:90%;">
+             <div style="padding:40px; font-family: monospace;">
+                <p>> ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL</p>
+                <p>> ENTER PASSWORD NOW</p>
+                <br>
+                <p>0xF3A2  $!@%SET%@#</p>
+                <p>0xF3B4  *&^$CODE^%$</p>
+                <p>0xF3C8  !@#$LINK!@#</p>
+                <p>> [SYSTEM ACTIVE]</p>
+             </div>
+        </div>
+
+        <div id="MapScreen" style="top:25px;width:100%;height:90%;">
+            <div id="MapArea" class="MapZone" style="top:15px; height:350px; border:1px solid;"></div>
+        </div>
+
+        <div id="RadioScreen" style="top:25px;width:100%;height:90%">
+            <ul id="RadioStationList">
+                <li id="FRM" class="InvetoryItemButton">Fallout Radio Main Station</li>
+                <li id="DCR" class="InvetoryItemButton">Diamond City Radio</li>
+            </ul>
+        </div>
     </div>
 
     <script type="text/javascript">
         $(document).ready(function() {
-            // Function to hide all pages
-            function hideAll() {
-                $(".page").hide();
+            // Function to handle tab switching manually since we changed the IDs
+            function clearScreens() {
+                $("#StatScreen, #InvScreen, #HackingScreen, #MapScreen, #RadioScreen").hide();
             }
 
-            // Hacking Tab Logic
-            $("#HackingMenu").click(function() {
-                $("#VideoOverlay").fadeIn(200);
+            // Hacking logic
+            $("#HackingTabTrigger").click(function() {
+                $("#VideoOverlay").show();
                 var vid = document.getElementById("HackingVid");
-                vid.currentTime = 0;
                 vid.play();
-
                 vid.onended = function() {
-                    $("#VideoOverlay").fadeOut(200);
-                    hideAll();
+                    $("#VideoOverlay").hide();
+                    clearScreens();
                     $("#HackingScreen").show();
                 };
             });
 
-            // Standard Tab Navigation
-            $("#StatMenu").click(function() { hideAll(); $("#StatScreen").show(); });
-            $("#InvMenu").click(function() { hideAll(); $("#InvScreen").show(); });
-            $("#MapMenu").click(function() { hideAll(); $("#MapScreen").show(); });
-            $("#RadioMenu").click(function() { hideAll(); $("#RadioScreen").show(); });
-
+            // Restore original tab clicks manually to ensure they work with green theme
+            $("#StatMenu").click(function() { clearScreens(); $("#StatScreen").show(); });
+            $("#InvMenu").click(function() { clearScreens(); $("#InvScreen").show(); });
+            $("#MapMenu").click(function() { clearScreens(); $("#MapScreen").show(); });
+            $("#RadioMenu").click(function() { clearScreens(); $("#RadioScreen").show(); });
         });
     </script>
 </body>
